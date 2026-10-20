@@ -1,0 +1,35 @@
+[
+  {
+    "title": "Cinepedia",
+    "description": "Una aplicación para organizar películas, explorar sus fichas y compartir comentarios.",
+    "details": "Proyecto de formación con Python, Flask y MySQL. Incluye registro e inicio de sesión, gestión de películas y comentarios, con separación entre controladores, modelos y plantillas.",
+    "technologies": [
+      "Python",
+      "Flask",
+      "MySQL",
+      "Jinja2"
+    ],
+    "categories": [
+      "Full stack"
+    ],
+    "repository": "https://github.com/akon1212233/Skillnest_Python/tree/main/python/flask/fundamentos/CORE/Cinepedia",
+    "art": "film"
+  },
+  {
+    "title": "TaskTrack",
+    "description": "Gestión de tareas y categorías con usuarios, validaciones y persistencia de datos.",
+    "details": "Simulación de certificación centrada en organizar tareas. Trabaja autenticación, sesiones, operaciones CRUD, categorías y relaciones entre tablas con una estructura MVC en Flask.",
+    "technologies": [
+      "Python",
+      "Flask",
+      "MySQL",
+      "MVC"
+    ],
+    "categories": [
+      "Full stack",
+      "Backend"
+    ],
+    "repository": "https://github.com/akon1212233/Skillnest_Python/tree/main/python/flask/fundamentos/CORE/Simulacion2-TaskTrack",
+    "art": "terminal"
+  }
+]
