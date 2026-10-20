@@ -1,5 +1,23 @@
 [
   {
+    "title": "BookHub",
+    "description": "Una biblioteca compartida para publicar libros, descubrir lecturas y guardar favoritos.",
+    "details": "Integra registro e inicio de sesión, catálogo de libros, favoritos y validación de formularios. La edición y eliminación se restringen al autor del libro. Lo elegí por combinar una experiencia completa con relaciones entre usuarios, libros y favoritos.",
+    "technologies": [
+      "Python",
+      "Flask",
+      "MySQL",
+      "Bootstrap"
+    ],
+    "categories": [
+      "Full stack",
+      "Backend"
+    ],
+    "repository": "https://github.com/akon1212233/Skillnest_Python/tree/main/python/flask/fundamentos/CORE/Simulacion1-CertificacionFullStack-PythonFlask",
+    "art": "terminal",
+    "image": "static/media/bookhub.svg"
+  },
+  {
     "title": "Cinepedia",
     "description": "Una aplicación para organizar películas, explorar sus fichas y compartir comentarios.",
     "details": "Proyecto de formación con Python, Flask y MySQL. Incluye registro e inicio de sesión, gestión de películas y comentarios, con separación entre controladores, modelos y plantillas.",
@@ -16,9 +34,44 @@
     "art": "film"
   },
   {
+    "title": "Pokédex",
+    "description": "Un catálogo visual de Pokémon con fichas, tipos y barras de poder.",
+    "details": "Construido con Flask y Jinja2 sobre una colección local de datos. Permite consultar Pokémon por nombre o número y limitar la cantidad de resultados mediante rutas. Incluye una vista para búsquedas sin resultados. Destaca por su identidad visual y el uso de rutas dinámicas; no depende de una API externa.",
+    "technologies": [
+      "Python",
+      "Flask",
+      "Jinja2",
+      "CSS"
+    ],
+    "categories": [
+      "Full stack"
+    ],
+    "repository": "https://github.com/akon1212233/Skillnest_Python/tree/main/python/flask/fundamentos/CORE/9.-%20CorePokedex",
+    "art": "terminal",
+    "image": "static/media/pokedex.svg"
+  },
+  {
+    "title": "Estudiantes y Cursos",
+    "description": "Gestión de talleres y alumnos con una vista de los estudiantes inscritos en cada taller.",
+    "details": "Permite crear talleres, registrar alumnos y consultar sus inscripciones. Organiza el código en modelos, controladores y plantillas, y utiliza LEFT JOIN para recuperar talleres incluso cuando aún no tienen alumnos. Lo elegí como muestra concreta de modelado relacional y consultas SQL.",
+    "technologies": [
+      "Python",
+      "Flask",
+      "MySQL",
+      "SQL"
+    ],
+    "categories": [
+      "Backend",
+      "Full stack"
+    ],
+    "repository": "https://github.com/akon1212233/Skillnest_Python/tree/main/python/flask/fundamentos/CORE/EstudiantesYCursos",
+    "art": "terminal",
+    "image": "static/media/academia.svg"
+  },
+  {
     "title": "TaskTrack",
-    "description": "Gestión de tareas y categorías con usuarios, validaciones y persistencia de datos.",
-    "details": "Simulación de certificación centrada en organizar tareas. Trabaja autenticación, sesiones, operaciones CRUD, categorías y relaciones entre tablas con una estructura MVC en Flask.",
+    "description": "En desarrollo: estructura inicial de un gestor de tareas y categorías.",
+    "details": "Simulación de certificación en preparación. La copia revisada contiene la estructura inicial, pero sus modelos y plantillas todavía están pendientes de implementación. Las funciones de autenticación, CRUD y persistencia son objetivos del proyecto, no funcionalidades terminadas.",
     "technologies": [
       "Python",
       "Flask",
