@@ -7,7 +7,14 @@
   const modal = document.querySelector("#pc-dialog");
   const expand = pc.querySelector("#pc-expand");
   const power = pc.querySelector("#pc-power");
-  const appNames = { terminal: "Terminal", files: "Archivos", notes: "Notas", calculator: "Calculadora", paint: "Pixel Studio", game: "Memoria", music: "Sonidos", timer: "Temporizador" };
+  const appNames = { terminal: "Terminal", files: "Archivos", notes: "Notas", calculator: "Calculadora", paint: "Pixel Studio", game: "Memoria", music: "Sonidos", timer: "Temporizador", racer: "Retro Racer", mines: "Buscaminas", backend: "SIGNAL", games: "Juegos" };
+  const gameIds = new Set(["racer", "backend", "mines", "game"]);
+  let cinema = false;
+  function gameMode(enabled) {
+    cinema = enabled; modal.classList.toggle("games-mode", enabled);
+    pc.querySelector("#pc-home").textContent = enabled ? "← JUEGOS" : "▦ AKON OS";
+    pc.querySelector("#pc-home").title = enabled ? "Volver a la biblioteca" : "Ir al escritorio";
+  }
   const secretNames = { vault: "El archivo olvidado", coffee: "Combustible backend", matrix: "Detrás de la pantalla", konami: "Jugador de la vieja escuela", time: "Cápsula del tiempo", wizard: "Pasadizo de texto" };
   const read = (key, fallback) => { try { return localStorage.getItem("akon-pc-" + key) ?? fallback; } catch { return fallback; } };
   const save = (key, value) => { try { localStorage.setItem("akon-pc-" + key, value); return true; } catch { return false; } };
@@ -32,7 +39,7 @@
     discovered.add(key); save("secrets", JSON.stringify([...discovered])); updateSecrets();
     announce("Secreto: " + secretNames[key]);
   }
-  function heading(text, back = desktop) {
+  function heading(text, back = cinema ? () => openApp("games") : desktop) {
     const bar = node("div", "pc-window-title"); bar.append(node("strong", "", text), button("← Volver", back)); workspace.append(bar);
   }
   function reset(app) {
@@ -44,40 +51,48 @@
   }
   function desktop() {
     if (!on) return;
+    gameMode(false);
     reset("desktop");
     const welcome = node("div", "pc-welcome");
     welcome.append(node("p", "", "BIENVENIDO A AKON OS"), node("span", "", "Un pequeño mundo detrás del código."));
     const grid = node("div", "pc-desktop");
-    const icons = { terminal: ">_", files: "▤", notes: "✎", calculator: "±", paint: "▦", game: "♧", music: "♫", timer: "◷" };
-    Object.entries(appNames).forEach(([app, name]) => {
+    const icons = { terminal: ">_", files: "▤", notes: "✎", calculator: "±", paint: "▦", game: "♧", music: "♫", timer: "◷", racer: "🏁", mines: "⚑", backend: "{ }", games: "✥" };
+    Object.entries(appNames).filter(([app]) => !gameIds.has(app) && !["files","notes"].includes(app)).forEach(([app, name]) => {
       const shortcut = button("", () => openApp(app)); shortcut.append(node("span", "pc-icon", icons[app]), node("span", "", name)); grid.append(shortcut);
     });
     workspace.append(welcome, grid, node("p", "pc-hint", "Abre una app con un clic. Hay 6 secretos escondidos. ¿Los encuentras?"));
   }
   function openApp(app) {
     if (!on || !Object.hasOwn(appNames, app)) return;
-    reset(app); heading(appNames[app]);
-    ({ terminal, files, notes: notepad, calculator, paint, game, music, timer })[app]();
+    const enteringGames = (app === "games" || gameIds.has(app)) && !cinema;
+    const origin = enteringGames ? AkonTransition.capture(pc) : null;
+    if (app === "games" || gameIds.has(app)) {
+      gameMode(true);
+      if (!modal.open) expand.click();
+    } else if (cinema) { AkonTransition.cancel(pc); gameMode(false); }
+    reset(app); if (app !== "games") heading(appNames[app]);
+    ({ terminal, files, notes: notepad, calculator, paint, game, music, timer, racer, mines, backend, games })[app]();
+    if (enteringGames) AkonTransition.enter(modal, pc, origin);
   }
+  function games() { AkonGames.mount(workspace, openApp); }
+  function mines() { stopApp = AkonArcade.mountMines(workspace); }
+  function backend() { stopApp = AkonSignal.mount(workspace); }
+  function racer() { stopApp = AkonRacer.mount(workspace); }
   const virtualFiles = {
-    "perfil.txt": "Akon Bustamante\nFull stack developer, con afinidad por el backend.\nPython · Flask · MySQL\n\nMe gusta entender lo que pasa detrás de la pantalla.",
+    "perfil.txt": "Akon Bustamante\nMe apasiona la tecnología.\nDesarrollo web full stack · C++ · Python\nLinux · Servidores Linux\n\nMe gusta entender cómo funcionan las cosas y aprender construyendo.",
     "contacto.txt": "Correo: akonbustamante11@gmail.com\nLinkedIn: https://www.linkedin.com/in/akon-bustamante-b58313319/\nGitHub: https://github.com/akon1212233",
     "leeme.txt": "Este es tu rincón para experimentar.\n\nLas notas y los dibujos se guardan en este navegador.\nTerminal: help muestra los comandos.\n\nUn viejo consejo: en una terminal, los archivos con un punto al inicio suelen pasar desapercibidos.\n\nAlgunos desarrolladores funcionan mejor después de un coffee.\nOtros se preguntan qué hay dentro de la matrix.\n\nActualización del archivo: prueba fortune cuando falten ideas.\nUn disquete olvidado lleva escrito: timecapsule.",
     ".vault": "ARCHIVO RECUPERADO — 1998\n\nEncontraste el primer rincón secreto.\n\nLa curiosidad también es una habilidad de programación.\n\nOtra pista: los jugadores de antes recuerdan esta secuencia.\n↑ ↑ ↓ ↓ ← → ← → B A\nPruébala dentro de la computadora, fuera de un campo de texto."
   };
+  AkonTools.configure(virtualFiles,notes);
   function showFile(name) {
     if (name === ".vault") unlock("vault");
     reset("files"); heading(name, () => openApp("files"));
     workspace.append(node("pre", "pc-document", virtualFiles[name] ?? notes));
     if (name === "contacto.txt") { const link = node("a", "pc-link", "Escribir un correo ↗"); link.href = "mailto:akonbustamante11@gmail.com"; workspace.append(link); }
   }
-  function files() {
-    workspace.append(node("p", "pc-hint", "A:/home/akon — selecciona un archivo"));
-    const list = node("div", "pc-file-list");
-    Object.keys(virtualFiles).filter(name => hiddenFiles || !name.startsWith(".")).forEach(name => list.append(button("▤ " + name, () => showFile(name))));
-    list.append(button("✎ notas.txt", () => openApp("notes")), button("▣ proyectos/", projectFolder)); workspace.append(list);
-    workspace.append(button(hiddenFiles ? "Ocultar archivos del sistema" : "Mostrar archivos del sistema", () => { hiddenFiles = !hiddenFiles; openApp("files"); }, "pc-subtle"));
-  }
+  function files() { AkonTools.manager(workspace, () => openApp("terminal"), name => editFile(name)); }
+  function editFile(name) { if(name===".vault")unlock("vault"); reset("notes"); heading("nano / " + name, () => openApp("terminal")); AkonTools.editor(workspace,name,()=>openApp("terminal")); }
   async function projectFolder() {
     reset("projects"); heading("A:/proyectos", () => openApp("files"));
     const listing = node("div", "pc-file-list", "Leyendo disco…"); workspace.append(listing);
@@ -91,12 +106,7 @@
       });
     } catch { if (listing.isConnected) { listing.textContent = "No se pudo leer el disco. "; listing.append(button("Reintentar", projectFolder)); } }
   }
-  function notepad() {
-    const label = node("label", "pc-hint", "notas.txt · Solo en este navegador"); label.htmlFor = "pc-notes";
-    const area = node("textarea", "pc-notes"); area.id = "pc-notes"; area.value = notes; area.maxLength = 10000; area.spellcheck = false;
-    area.addEventListener("input", () => { notes = area.value; announce(save("notes", notes) ? "Notas guardadas en este navegador." : "Sin almacenamiento: notas guardadas solo durante esta visita."); });
-    workspace.append(label, area, button("Descargar .txt ↓", () => download("notas-akon.txt", notes, "text/plain;charset=utf-8"), "pc-subtle"));
-  }
+  function notepad() { AkonTools.editor(workspace,"notas.txt",()=>openApp("terminal")); }
   function download(filename, content, type) {
     const url = URL.createObjectURL(new Blob([content], { type }));
     const link = node("a"); link.href = url; link.download = filename; document.body.append(link); link.click(); link.remove();
@@ -135,41 +145,38 @@
     })));
     form.append(label, input, result, keys); workspace.append(form);
   }
-  function paint() {
-    let color = palette[1];
-    const tools = node("div", "pc-palette"); tools.setAttribute("role", "group"); tools.setAttribute("aria-label", "Color del pincel");
-    const colorNames = ["Borrador", "Verde", "Ámbar", "Coral", "Azul", "Marfil"];
-    palette.forEach((value, i) => { const swatch = button("", () => { color = value; [...tools.children].forEach(el => el.setAttribute("aria-pressed", String(el === swatch))); }); swatch.style.background = value; swatch.setAttribute("aria-label", colorNames[i]); swatch.setAttribute("aria-pressed", String(value === color)); tools.append(swatch); });
-    const canvas = node("div", "pc-pixels"); canvas.setAttribute("role", "group"); canvas.setAttribute("aria-label", "Lienzo de 12 por 8 píxeles. Pulsa para pintar.");
-    pixels.forEach((value, i) => { const pixel = button("", () => { pixels[i] = color; pixel.style.background = color; pixel.setAttribute("aria-label", `Píxel ${i + 1}: ${colorNames[palette.indexOf(color)]}`); announce(save("pixels", JSON.stringify(pixels)) ? "Dibujo guardado." : "Dibujo disponible solo durante esta visita."); }); pixel.style.background = value; pixel.setAttribute("aria-label", `Píxel ${i + 1}: ${colorNames[palette.indexOf(value)]}`); canvas.append(pixel); });
-    const actions = node("div", "pc-row");
-    actions.append(button("Limpiar", () => { pixels.fill(palette[0]); save("pixels", JSON.stringify(pixels)); openApp("paint"); }), button("Descargar SVG ↓", () => { const squares = pixels.map((value, i) => `<rect x="${i % 12}" y="${Math.floor(i / 12)}" width="1" height="1" fill="${value}"/>`).join(""); download("pixel-akon.svg", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" width="600" height="400">${squares}</svg>`, "image/svg+xml"); }));
-    workspace.append(tools, canvas, actions);
-  }
+  function paint() { AkonTools.paint(workspace,pixels,palette,()=>save("pixels",JSON.stringify(pixels)),download); }
   function game() {
-    const symbols = ["{ }", ">_", "01", "#", "@", "*"];
-    const deck = [...symbols, ...symbols];
-    for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
-    let first = null, locked = false, matches = 0, moves = 0, timer;
-    const score = node("p", "pc-hint", "Encuentra los 6 pares. Intentos: 0"); score.setAttribute("role", "status");
-    const grid = node("div", "pc-memory");
-    deck.forEach((symbol, i) => {
-      const card = button("?", () => {
-        if (locked || card.disabled || card === first) return;
-        card.textContent = symbol; card.setAttribute("aria-label", `Carta ${i + 1}: ${symbol}`); card.classList.add("flipped");
-        if (!first) { first = card; return; }
-        moves++;
-        if (first.textContent === symbol) {
-          card.disabled = true; first.disabled = true; card.classList.add("matched"); first.classList.add("matched"); first = null; matches++;
-          score.textContent = matches === 6 ? `¡Completado en ${moves} intentos! Una memoria digna de 64 KB.` : `Pares: ${matches}/6 · Intentos: ${moves}`;
-        } else {
-          score.textContent = `Pares: ${matches}/6 · Intentos: ${moves}`; locked = true;
-          timer = setTimeout(() => { [first, card].forEach(el => { el.textContent = "?"; el.classList.remove("flipped"); el.setAttribute("aria-label", `Carta ${Number(el.dataset.index) + 1}, oculta`); }); first = null; locked = false; }, 850);
-        }
-      }); card.dataset.index = i; card.setAttribute("aria-label", `Carta ${i + 1}, oculta`); grid.append(card);
+    const symbols = ['Sol','Luna','Montaña','Rayo','Estrella','Hoja'];
+    const paths = [
+      '<circle cx="40" cy="40" r="13"/><path d="M40 10v9m0 42v9M10 40h9m42 0h9M19 19l7 7m28 28l7 7M19 61l7-7m28-28l7-7"/>',
+      '<path d="M53 14a28 28 0 1 0 13 42A28 28 0 0 1 53 14Z"/>',
+      '<path d="m8 62 24-41 11 19 9-12 21 34ZM23 37l9 6 8-6M47 35l6 8 5-4"/>',
+      '<path d="M43 8 21 44h17l-3 28 26-40H44Z"/>',
+      '<path d="m40 9 9 20 23 3-17 16 4 23-19-11-19 11 4-23L8 32l23-3Z"/>',
+      '<path d="M61 12C25 11 8 34 23 54c21 24 45-3 38-42ZM18 67l35-43M28 54l-1-17m11 5 17 1"/>'
+    ];
+    const variants=symbols.flatMap(symbol=>['Ámbar','Azul'].map(color=>symbol+'|'+color));const deck = [...variants,...variants];for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+    let first=null,locked=false,matches=0,moves=0,timer;
+    const box=node('section','memory-game');const header=node('div','play-heading');header.append(node('span','','04 / EL ARCHIVO DE LOS RECUERDOS'),node('h2','','Lo que permanece'),node('p','','Veinticuatro cartas. Doce parejas de símbolo y color. Tómate tu tiempo.'));
+    const score=node('p','memory-score','PARES 00 / 12  ·  INTENTOS 00');score.setAttribute('role','status');
+    const grid=node('div','pc-memory');
+    deck.forEach((symbol,i)=>{
+      const card=button('',()=>{
+        if(locked||card.disabled||card===first)return;
+        card.setAttribute('aria-label',`Carta ${i+1}: ${symbol.replace('|',', ')}`);card.classList.add('flipped');
+        if(!first){first=card;return;}moves++;
+        if(first.dataset.symbol===symbol){card.disabled=true;first.disabled=true;card.classList.add('matched');first.classList.add('matched');first=null;matches++;score.textContent=matches===12?`ARCHIVO COMPLETO · ${moves} INTENTOS`:`PARES ${String(matches).padStart(2,'0')} / 12 · INTENTOS ${String(moves).padStart(2,'0')}`;}
+        else{score.textContent=`PARES ${String(matches).padStart(2,'0')} / 12 · INTENTOS ${String(moves).padStart(2,'0')}`;locked=true;timer=setTimeout(()=>{[first,card].forEach(el=>{el.classList.remove('flipped');el.setAttribute('aria-label',`Carta ${Number(el.dataset.index)+1}, oculta`);});first=null;locked=false;},850);}
+      });
+      card.dataset.index=i;card.dataset.symbol=symbol;card.dataset.color=symbol.split('|')[1];card.className='memory-card';card.setAttribute('aria-label',`Carta ${i+1}, oculta`);
+      const inner=node('span','memory-card-inner'),back=node('span','memory-card-back'),front=node('span','memory-card-front');inner.setAttribute('aria-hidden','true');
+      back.append(node('span','memory-seal','✧'),node('small','','AKON ARCHIVE'));
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 80 80');svg.innerHTML=paths[symbols.indexOf(symbol.split('|')[0])];front.append(svg,node('small','',symbol.replace('|',' · ')));inner.append(back,front);card.append(inner);grid.append(card);
     });
-    stopApp = () => clearTimeout(timer);
-    workspace.append(score, grid, button("Nueva partida ↻", () => openApp("game"), "pc-subtle"));
+    stopApp=()=>clearTimeout(timer);
+    const foot=node('div','memory-footer');foot.append(node('p','','Los símbolos solo se quedan si encuentran su pareja.'),button('Barajar de nuevo ↻',()=>openApp('game'),'game-action-primary'));
+    box.append(header,score,grid,foot);workspace.append(box);
   }
   function music() {
     workspace.append(node("p", "pc-hint", "Tres pequeñas melodías originales. El sonido solo empieza cuando pulsas reproducir."));
@@ -240,9 +247,12 @@
       print("akon:~$ " + raw);
       const [command, ...args] = raw.split(/\s+/); const value = args.join(" ");
       switch (command.toLowerCase()) {
-        case "help": print("help · ls [-a] · cat <archivo> · whoami · date\ncalc <operación> · echo <texto> · clear\nopen terminal|files|notes|calculator|paint|game|music|timer\nprojects · play · home · reboot\nTip: lee leeme.txt. Hay comandos que no aparecen aquí."); break;
-        case "ls": print(Object.keys(virtualFiles).filter(file => args.includes("-a") || !file.startsWith(".")).concat(["notas.txt", "proyectos/"]).join("  ")); break;
-        case "cat": if (Object.hasOwn(virtualFiles, value)) { print(virtualFiles[value]); if (value === ".vault") unlock("vault"); } else if (value === "notas.txt") print(notes); else print("Archivo no encontrado. Usa ls o ls -a."); break;
+        case "help": print("yazi · touch <archivo> · nano <archivo>\nhelp · ls [-a] · cat <archivo> · whoami · date\ncalc <operación> · echo <texto> · clear\nopen terminal|files|notes|calculator|paint|game|music|timer|racer|mines|backend|games\nprojects · play · home · reboot\nTip: lee leeme.txt. Hay comandos que no aparecen aquí."); break;
+        case "ls": print(AkonTools.names().filter(file => args.includes("-a") || !file.startsWith(".")).concat(["proyectos/"]).join("  ")); break;
+        case "yazi": openApp("files"); break;
+        case "touch": try { AkonTools.create(value); print("Archivo listo: " + value); } catch(err) { print(err.message); } break;
+        case "nano": case "edit": try { AkonTools.create(value); editFile(value); } catch(err) { print(err.message); } break;
+        case "cat": { const content=AkonTools.read(value); print(content===null?"Archivo no encontrado.":content); if(value===".vault")unlock("vault"); break; }
         case "whoami": print(virtualFiles["perfil.txt"]); break;
         case "date": print(new Date().toLocaleString("es-CL")); break;
         case "echo": print(value); break;
@@ -275,10 +285,17 @@
   }
   function matrix() {
     reset("matrix"); heading("Señal encontrada", () => openApp("terminal")); unlock("matrix");
-    const rain = node("pre", "pc-matrix"); rain.setAttribute("aria-hidden", "true");
-    workspace.append(node("p", "pc-hint", "Ahora ves lo que hay detrás del código."), rain);
-    const draw = () => { rain.textContent = Array.from({ length: 10 }, () => Array.from({ length: 28 }, () => "01.: ｱｺﾝ"[Math.floor(Math.random() * 8)]).join("")).join("\n"); };
-    draw(); if (!matchMedia("(prefers-reduced-motion: reduce)").matches) { const timer = setInterval(draw, 180); stopApp = () => clearInterval(timer); }
+    const view=node('div','matrix-view'),canvas=node('canvas','matrix-canvas');
+    canvas.setAttribute('aria-label','Lluvia de caracteres verdes que ocupa la pantalla disponible');
+    view.append(canvas);workspace.append(view);
+    const ctx=canvas.getContext('2d');if(!ctx){view.textContent='Tu navegador no permite dibujar este efecto.';return;}
+    let width=0,height=0,drops=[],frame,last=0,stopped=false;
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,chars='0123456789アイウエオカキクケコサシスセソ';
+    function resize(){const rect=view.getBoundingClientRect();width=Math.max(1,rect.width);height=Math.max(1,rect.height);const ratio=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);ctx.setTransform(ratio,0,0,ratio,0,0);drops=Array.from({length:Math.ceil(width/15)},()=>Math.random()*height/17);ctx.fillStyle='#030c07';ctx.fillRect(0,0,width,height);for(let i=0;i<18;i++)draw();}
+    function draw(){ctx.fillStyle='rgba(3,12,7,.12)';ctx.fillRect(0,0,width,height);ctx.font='14px monospace';drops.forEach((y,i)=>{const x=i*15;ctx.fillStyle=Math.random()>.93?'#d3ffcc':'#59cf7a';ctx.fillText(chars[Math.floor(Math.random()*chars.length)],x,y*17);drops[i]=y*17>height&&Math.random()>.975?0:y+.7;});}
+    function loop(now){if(stopped)return;if(now-last>65){draw();last=now;}frame=requestAnimationFrame(loop);}
+    const observer=new ResizeObserver(resize);observer.observe(view);resize();if(!reduced)frame=requestAnimationFrame(loop);
+    stopApp=()=>{stopped=true;observer.disconnect();cancelAnimationFrame(frame);};
   }
   const sequence = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
   let sequenceIndex = 0;
@@ -291,23 +308,26 @@
     } else sequenceIndex = key === sequence[0] ? 1 : 0;
   });
   pc.querySelectorAll("[data-app]").forEach(el => { el.setAttribute("aria-label", el.title); el.addEventListener("click", () => openApp(el.dataset.app)); });
-  pc.querySelector("#pc-home").addEventListener("click", desktop);
+  pc.querySelector("#pc-home").addEventListener("click", () => cinema ? openApp("games") : desktop());
+  pc.querySelector("#pc-crt").addEventListener("click", event => {
+    const plain = modal.classList.toggle("crt-off"); event.currentTarget.textContent = plain ? "CRT OFF" : "CRT ON"; event.currentTarget.setAttribute("aria-pressed", String(!plain));
+  });
   pc.querySelector("#pc-secrets").addEventListener("click", secrets);
   power.addEventListener("click", () => {
-    on = !on; stopApp(); sequenceIndex = 0;
+    AkonTransition.cancel(pc); on = !on; stopApp(); sequenceIndex = 0;
     pc.classList.toggle("pc-off", !on); power.setAttribute("aria-pressed", String(on)); power.setAttribute("aria-label", on ? "Apagar computadora" : "Encender computadora"); power.title = on ? "Apagar computadora" : "Encender computadora";
     pc.querySelectorAll("[data-app], #pc-home, #pc-secrets").forEach(el => el.disabled = !on);
     if (on) desktop(); else { workspace.replaceChildren(node("div", "pc-off-message", "SISTEMA APAGADO\nPulsa ⏻ para volver.")); announce("En espera."); }
   });
   expand.addEventListener("click", () => {
     if (modal.open) { modal.close(); return; }
-    modal.append(pc); modal.showModal(); expand.textContent = "↙"; expand.setAttribute("aria-label", "Reducir computadora"); expand.title = "Reducir computadora"; expand.focus();
+    modal.append(pc); modal.showModal(); expand.textContent = "✕"; expand.setAttribute("aria-label", "Cerrar computadora ampliada"); expand.title = "Cerrar computadora ampliada"; expand.focus();
   });
-  modal.addEventListener("close", () => { document.querySelector("#computer-slot").append(pc); expand.textContent = "⛶"; expand.setAttribute("aria-label", "Ampliar computadora"); expand.title = "Ampliar computadora"; expand.focus(); });
+  modal.addEventListener("close", () => { AkonTransition.cancel(pc); stopApp(); gameMode(false); if (on) desktop(); document.querySelector("#computer-slot").append(pc); expand.textContent = "⛶"; expand.setAttribute("aria-label", "Ampliar computadora"); expand.title = "Ampliar computadora"; expand.focus(); });
   document.addEventListener("akon:open-app", event => {
     if (!Object.hasOwn(appNames, event.detail)) return;
     if (!on) power.click();
-    if (!modal.open) expand.click();
+    if (!modal.open && event.detail !== "games" && !gameIds.has(event.detail)) expand.click();
     openApp(event.detail);
   });
   function clock() { pc.querySelector("#pc-clock").textContent = new Date().toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" }); }

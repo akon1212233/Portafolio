@@ -2,15 +2,24 @@
 <html lang="es" data-theme="dark">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Portafolio de Akon Bustamante. Desarrollo full stack con especial afinidad por el backend, Python y Flask.">
+  <meta name="description" content="Portafolio de Akon Bustamante. Tecnología, desarrollo web full stack, C++, Python, Linux y servidores Linux.">
   <meta name="theme-color" content="#191c18">
   <title>Akon Bustamante — Full stack / Backend</title>
   <link rel="icon" href="static/media/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="static/css/style.css">
-  <script src="static/js/workshop-core.js" defer></script>
-  <script src="static/js/app.js" defer></script>
-  <script src="static/js/workshop.js" defer></script>
-  <script src="static/js/retro-pc.js" defer></script>
+  <link rel="stylesheet" href="static/css/style.css?v=d7c161da782a">
+  <link rel="stylesheet" href="static/css/game-worlds.css?v=bbc5414ce033">
+  <link rel="stylesheet" href="static/css/cinema.css?v=d46ace98506d">
+  <link rel="stylesheet" href="static/css/pc-tools.css?v=cbbe69c7ddc5">
+  <script src="static/js/workshop-core.js?v=50583d6d57c9" defer></script>
+  <script src="static/js/app.js?v=a99b0e203940" defer></script>
+  <script src="static/js/workshop.js?v=28b7fff650cf" defer></script>
+  <script src="static/js/racer.js?v=74eed45e06b3" defer></script>
+  <script src="static/js/arcade.js?v=4796cf432a28" defer></script>
+  <script src="static/js/signal.js?v=90bd40d8ca17" defer></script>
+  <script src="static/js/games-menu.js?v=252e6f15f414" defer></script>
+  <script src="static/js/games-transition.js?v=e3c1e90d50a1" defer></script>
+  <script src="static/js/pc-tools.js?v=d67d0430c9a0" defer></script>
+  <script src="static/js/retro-pc.js?v=c5996370ab0d" defer></script>
 </head>
 <body>
 <div id="reading-progress" aria-hidden="true"></div>
@@ -26,18 +35,18 @@
 <section class="hero wrap" aria-labelledby="hero-title">
   <div class="hero-copy"><p class="eyebrow"><span class="status-dot"></span> PORTAFOLIO PERSONAL / VOL. 01</p>
   <h1 id="hero-title">Akon<br>Bustamante<span class="cursor">_</span></h1>
-  <p class="role">FULL STACK DEVELOPER <span>↳ BACKEND EN EL ADN</span></p>
-  <p class="intro">Me gusta lo que pasa detrás de la pantalla.<br>La lógica, los datos y las piezas que hacen<br class="desktop-break"> que todo funcione.</p>
+  <p class="role">FULL STACK DEVELOPER <span>↳ CÓDIGO, LINUX Y CURIOSIDAD</span></p>
+  <p class="intro">Me apasiona la tecnología: desde crear una web<br>hasta entender cómo funciona un servidor Linux.<br class="desktop-break"> Siempre hay algo nuevo por explorar.</p>
   <div class="hero-actions"><a class="button primary" href="#proyectos">Explorar proyectos <span>↘</span></a><a class="text-link" href="https://github.com/akon1212233" target="_blank" rel="noopener noreferrer">Mi GitHub ↗</a></div>
-  <div class="hero-tools"><a href="#laboratorio">[ Entrar al laboratorio ]</a><button type="button" id="download-profile">[ Descargar mi ficha ↓ ]</button></div>
-  <p class="hero-foot">PYTHON · FLASK · MYSQL · CAFÉ</p></div>
+  <div class="hero-tools"><button type="button" id="launch-games" class="games-entry"><span aria-hidden="true">✥</span> Juegos <span aria-hidden="true">↗</span></button><a href="#laboratorio">[ Entrar al laboratorio ]</a><button type="button" id="download-profile">[ Descargar mi ficha ↓ ]</button></div>
+  <p class="hero-foot">C++ · PYTHON · LINUX · FULL STACK</p></div>
   <div id="computer-slot">
     <section id="retro-pc" class="computer interactive-pc" aria-label="Computadora interactiva Akon OS" tabindex="-1">
       <div class="monitor"><div class="screen">
-        <div class="pc-top"><button type="button" id="pc-home" title="Ir al escritorio">▦ AKON OS</button><span id="pc-clock" aria-label="Hora local"></span><button type="button" id="pc-expand" aria-label="Ampliar computadora" title="Ampliar computadora">⛶</button></div>
+        <div class="pc-top"><button type="button" id="pc-home" title="Ir al escritorio">▦ AKON OS</button><button type="button" id="pc-crt" aria-pressed="true" title="Activar o desactivar el efecto de pantalla CRT">CRT ON</button><span id="pc-clock" aria-label="Hora local"></span><button type="button" id="pc-expand" aria-label="Ampliar computadora" title="Ampliar computadora">⛶</button></div>
         <div class="pc-workspace" id="pc-workspace"><noscript>Activa JavaScript para encender esta computadora.</noscript></div>
         <nav class="pc-dock" aria-label="Aplicaciones de la computadora">
-          <button type="button" data-app="terminal" title="Terminal">&gt;_</button><button type="button" data-app="files" title="Archivos">▤</button><button type="button" data-app="notes" title="Bloc de notas">✎</button><button type="button" data-app="calculator" title="Calculadora">±</button><button type="button" data-app="paint" title="Pixel Studio">▦</button><button type="button" data-app="game" title="Juego de memoria">♧</button>
+          <button type="button" data-app="terminal" title="Terminal">&gt;_</button><button type="button" data-app="calculator" title="Calculadora">±</button><button type="button" data-app="paint" title="Pixel Studio">▦</button><button type="button" data-app="games" title="Juegos">✥</button>
         </nav>
         <div class="pc-status"><span id="pc-status" role="status">Sistema listo.</span><button type="button" id="pc-secrets" title="Ver descubrimientos">◇ 0/6</button></div>
       </div><div class="monitor-bottom"><span>AB / PERSONAL COMPUTER</span><button type="button" id="pc-power" aria-label="Apagar computadora" aria-pressed="true" title="Apagar computadora">⏻</button></div></div>
@@ -47,8 +56,8 @@
 </section>
 <div class="ticker" aria-hidden="true"><div class="wrap">PENSAR EN LÓGICA <span>✳</span> CONSTRUIR CON INTENCIÓN <span>✳</span> APRENDER HACIENDO <span>✳</span> SIEMPRE ITERANDO</div></div>
 <section id="sobre-mi" class="about wrap section">
-  <div><p class="eyebrow">01 / DETRÁS DEL CÓDIGO</p><h2>Full stack.<br>De corazón,<br><em>backend.</em></h2></div>
-  <div class="about-content"><p class="large-copy">Soy Akon Bustamante, programador full stack. Me manejo con muchísima más facilidad en el backend: ahí es donde me siento en casa.</p><p>En mi formación en Skillnest he trabajado en aplicaciones con Python, Flask y MySQL, conectando interfaces con lógica de negocio y bases de datos. Este espacio reúne parte de ese recorrido.</p><p>Me interesa seguir profundizando en el desarrollo backend y construir aplicaciones claras, útiles y bien organizadas.</p><div class="skills" aria-label="Tecnologías"><span>Python</span><span>Flask</span><span>MySQL</span><span>HTML / CSS</span><span>JavaScript</span><span>Git / GitHub</span></div></div>
+  <div><p class="eyebrow">01 / DETRÁS DEL CÓDIGO</p><h2>Tecnología.<br>Curiosidad.<br><em>Sin dejar de aprender.</em></h2></div>
+  <div class="about-content"><p class="large-copy">Soy Akon Bustamante y me gusta muchísimo la tecnología. Tengo conocimientos de programación web full stack, C++, Python, Linux y servidores Linux. Me interesa entender cómo funcionan las cosas y aprender construyendo.</p><p>En mi formación en Skillnest he trabajado en aplicaciones con Python, Flask y MySQL, conectando interfaces con lógica de negocio y bases de datos. Este espacio reúne parte de ese recorrido.</p><p>Disfruto especialmente el backend, pero mi curiosidad va más allá de la web: también me interesan los sistemas, las herramientas y la infraestructura que hacen posible una aplicación.</p><div class="skills" aria-label="Tecnologías"><span>C++</span><span>Python</span><span>Linux</span><span>Servidores Linux</span><span>Flask</span><span>MySQL</span><span>HTML / CSS</span><span>JavaScript</span><span>Git / GitHub</span></div></div>
 </section>
 <section id="proyectos" class="projects section wrap">
   <div class="section-heading"><div><p class="eyebrow">02 / ARCHIVO DE PROYECTOS</p><h2>Hecho con código<span class="accent">.</span></h2></div><span class="small-note">EXPERIMENTAR. CONSTRUIR. APRENDER.</span></div>
@@ -61,14 +70,14 @@
 </section>
 <section id="laboratorio" class="lab-section section">
   <div class="wrap"><div class="section-heading"><div><p class="eyebrow">03 / LABORATORIO ABIERTO</p><h2>Lo que pasa <em>detrás.</em></h2></div><span class="small-note">UNA PETICIÓN. MUCHAS PIEZAS.</span></div>
-  <p class="lab-intro">Prueba una pequeña API de tareas y sigue el recorrido de cada petición. Cambia los datos, provoca un error y mira qué responde.</p>
+  <p class="lab-intro">Prueba una pequeña API de tareas y observa cómo cambia su colección de datos. Cambia los datos, provoca un error y mira qué responde.</p>
   <div class="lab-layout"><div class="lab-console"><div class="lab-bar"><span>REQUEST BUILDER</span><span class="lab-badge">DEMO LOCAL</span></div>
     <form id="api-form"><label for="api-method">Operación</label><select id="api-method"><option value="GET">GET — Consultar tareas</option><option value="POST">POST — Crear una tarea</option><option value="DELETE">DELETE — Eliminar una tarea</option></select>
     <label for="api-value" id="api-value-label">ID (opcional; vacío devuelve todas)</label><input id="api-value" maxlength="80" placeholder="Ejemplo: 1" autocomplete="off">
     <div class="api-endpoint" id="api-endpoint">GET /api/tareas</div><button type="submit" class="button primary">Ejecutar petición <span>↵</span></button></form>
     <p class="fine-print">Simulación en tu navegador. No envía peticiones a un servidor. Los datos se reinician al recargar.</p><button type="button" class="subtle-button" id="api-reset">↻ Restaurar datos de ejemplo</button>
   </div><div class="lab-result"><div class="lab-bar"><span>RESPONSE</span><span id="api-code" role="status">LISTO</span></div><pre id="api-response" tabindex="0" aria-label="Respuesta JSON">{ "mensaje": "Esperando tu primera petición…" }</pre><button id="api-copy" type="button" class="subtle-button">Copiar respuesta</button><span id="api-copy-status" role="status"></span>
-  <ol class="request-trace" id="request-trace"><li><strong>01 · Ruta</strong><span>Recibe la operación y el recurso.</span></li><li><strong>02 · Validación</strong><span>Revisa lo que envía el cliente.</span></li><li><strong>03 · Datos</strong><span>Consulta o modifica la colección.</span></li><li><strong>04 · Respuesta</strong><span>Devuelve JSON y un código de estado.</span></li></ol></div></div></div>
+  <section class="lab-stored" aria-labelledby="stored-title"><div class="lab-bar"><span id="stored-title">DATOS GUARDADOS</span><span id="stored-count" role="status"></span></div><div class="lab-stored-scroll"><table><thead><tr><th scope="col">ID</th><th scope="col">Título</th></tr></thead><tbody id="stored-rows"></tbody></table></div><p id="stored-empty" hidden>No hay tareas guardadas.</p><p class="fine-print">Colección de esta sesión. Se reinicia al recargar.</p></section></div></div></div>
 </section>
 <section id="bitacora" class="section wrap journal"><div><p class="eyebrow">04 / BITÁCORA DE APRENDIZAJE</p><h2>Construir.<br>Entender.<br><em>Volver a intentar.</em></h2><p class="journal-note">Las piezas que conecto en mis proyectos.</p></div><div class="journal-entries">
   <details open><summary><span>01</span> De la interfaz a la interacción <b>+</b></summary><p>HTML y CSS dan forma a una idea. JavaScript permite responder a eventos y convertir esa interfaz en algo que se puede explorar. Esta página es un ejemplo: filtros, ventanas y una computadora dentro del navegador.</p><a href="#proyectos">Explorar los proyectos ↗</a></details>

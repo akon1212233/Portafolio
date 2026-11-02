@@ -1,0 +1,7 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {create}=require('../flask_app/static/js/signal.js');
+const solutions=[[[7,3],[14,2]],[[8,1]],[[7,3]],[[19,2],[7,1],[16,2]]];
+function run(g){g.start();for(let i=0;i<80&&g.state.status==='running';i++)g.step();return g.state.status;}
+test('Los cuatro niveles tienen solución sin atajos al estado',()=>{solutions.forEach((moves,i)=>{const g=create(i);for(const [id,n]of moves)for(let j=0;j<n;j++)g.rotate(id);assert.equal(run(g),'won','nivel '+i);assert.equal(g.state.fragments.size,g.state.tiles.filter(t=>t.type==='shard').length);});});
+test('Rutas originales fallan y no se editan durante ejecución',()=>{for(let i=0;i<4;i++){const g=create(i);assert.equal(run(g),'lost');g.start();assert.equal(g.rotate(7),false);}});
+test('Detecta bucles, errores sin parche y vacío',()=>{const g=create(3);g.rotate(19);g.rotate(19);assert.equal(run(g),'lost');assert.match(g.state.message,/Bucle/);const patch=create(2);assert.equal(run(patch),'lost');assert.match(patch.state.message,/ERR/);const gap=create(0);assert.equal(run(gap),'lost');assert.match(gap.state.message,/vacío/);});
+test('Reiniciar borra el recorrido pero conserva los cambios; no muta otros tableros',()=>{const g=create(0);g.rotate(7);const dir=g.state.tiles.find(t=>t.x===1&&t.y===1).dir;g.start();g.step();g.start();assert.equal(g.state.trail.length,0);assert.equal(g.state.tiles.find(t=>t.x===1&&t.y===1).dir,dir);assert.equal(create(0).state.tiles.find(t=>t.x===1&&t.y===1).dir,1);});

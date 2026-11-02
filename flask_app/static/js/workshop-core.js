@@ -13,10 +13,22 @@
     const reset = () => { tasks = [{ id: 1, titulo: "Explorar el portafolio" }, { id: 2, titulo: "Encontrar un secreto en Akon OS" }]; next = 3; };
     reset();
     function request(method, input = "") {
-      const value = input.trim();
+      let value = input.trim();
       const response = (status, body, stage = 4) => ({ status, body, stage });
       if (!["GET", "POST", "DELETE"].includes(method)) return response(405, { error: "Método no permitido" }, 1);
       if (method === "POST") {
+        if (/^[{["\]]/.test(value)) {
+          let parsed;
+          try { parsed = JSON.parse(value); }
+          catch { return response(400, { error: 'JSON incompleto o inválido. Usa {"titulo":"Tu tarea"} o escribe el título directamente.' }, 2); }
+          if (typeof parsed === "string") value = parsed.trim();
+          else if (parsed && !Array.isArray(parsed) && typeof parsed === "object") {
+            const title = parsed.titulo ?? parsed.title;
+            if (typeof title !== "string") return response(400, { error: 'El JSON debe contener "titulo" (o "title") como texto.' }, 2);
+            if (typeof parsed.titulo === "string" && typeof parsed.title === "string" && parsed.titulo.trim() !== parsed.title.trim()) return response(400, { error: 'El JSON contiene dos títulos diferentes. Usa solo "titulo".' }, 2);
+            value = title.trim();
+          } else return response(400, { error: 'Usa un objeto con "titulo" de texto, no una lista ni otro tipo de dato.' }, 2);
+        }
         if (value.length < 3 || value.length > 80) return response(400, { error: "El título debe tener entre 3 y 80 caracteres." }, 2);
         if (tasks.length >= 25) return response(409, { error: "Disco de demo lleno. Elimina una tarea o restaura los datos." }, 3);
         const task = { id: next++, titulo: value }; tasks.push(task); return response(201, { ...task });
